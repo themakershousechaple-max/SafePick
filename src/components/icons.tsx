@@ -1,0 +1,20 @@
+export function IconSearch(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" fill="none"/><path d="M20 20l-4-4" stroke="currentColor" strokeWidth="2"/></svg>) }
+export function IconMenu(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2"/></svg>) }
+export function IconBell(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><path d="M12 3a5 5 0 00-5 5v3c0 .8-.3 1.6-.8 2.2L5 15h14l-1.2-1.8c-.5-.6-.8-1.4-.8-2.2V8a5 5 0 00-5-5" stroke="currentColor" strokeWidth="2" fill="none"/><path d="M10 19a2 2 0 004 0" stroke="currentColor" strokeWidth="2"/></svg>) }
+export function IconCalendar(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="2" fill="none"/><path d="M3 9h18" stroke="currentColor" strokeWidth="2"/><path d="M8 3v4M16 3v4" stroke="currentColor" strokeWidth="2"/></svg>) }
+export function IconChevronDown(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" fill="none"/></svg>) }
+export function IconEye(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="2" fill="none"/><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/></svg>) }
+export function IconAlert(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><path d="M12 3l10 18H2L12 3z" stroke="currentColor" strokeWidth="2" fill="none"/><circle cx="12" cy="17" r="1.5" fill="currentColor"/><path d="M12 9v5" stroke="currentColor" strokeWidth="2"/></svg>) }
+export function IconShield(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><path d="M12 3l8 3v6c0 5-4.3 7.7-8 9-3.7-1.3-8-4-8-9V6l8-3z" stroke="currentColor" strokeWidth="2" fill="none"/></svg>) }
+export function IconChurch(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><path d="M12 3l3 2v3l4 2v9H5v-9l4-2V5l3-2z" stroke="currentColor" strokeWidth="2" fill="none"/><path d="M10 12h4v6h-4z" stroke="currentColor" strokeWidth="2" fill="none"/></svg>) }
+export function IconBack(props: React.SVGProps<SVGSVGElement>) { return (<svg viewBox="0 0 24 24" width="1em" height="1em" {...props}><path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" fill="none"/></svg>) }
+export function LogoMark(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 48 48" width="1em" height="1em" {...props}>
+      <rect x="4" y="4" width="40" height="40" rx="12" stroke="currentColor" strokeWidth="2" fill="none" />
+      <path d="M24 12l4 3v4l5 2v12H15V21l5-2v-4l4-3z" stroke="currentColor" strokeWidth="2" fill="none" />
+      <circle cx="24" cy="28" r="3" stroke="currentColor" strokeWidth="2" fill="none" />
+      <path d="M18 33c2-2 4-3 6-3s4 1 6 3" stroke="currentColor" strokeWidth="2" fill="none" />
+    </svg>
+  )
+}
