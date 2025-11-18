@@ -43,9 +43,9 @@ export default function GeneratePickup() {
     <div className="p-4 max-w-md mx-auto dark:text-gray-100">
       <div className="text-lg font-semibold">Generate Pickup Code</div>
       <div className="mt-4 bg-white rounded-xl border p-4 dark:bg-gray-800 dark:border-gray-700">
-        <div className="text-sm text-gray-600">Pickup Code for: {childName || '—'}</div>
+        <div className="text-sm text-gray-600 dark:text-gray-300">Pickup Code for: {childName || '—'}</div>
         <div className="mt-3 flex items-center justify-center p-4 bg-emerald-900 rounded">
-          <div className="bg-white rounded-xl p-4">
+          <div className="bg-white dark:bg-gray-900 dark:border dark:border-gray-700 rounded-xl p-4">
             <QR value={url} />
           </div>
         </div>
@@ -65,11 +65,11 @@ export default function GeneratePickup() {
               if (!next) localStorage.removeItem('remember_parent')
               return next
             })
-          }} className={(remember?"bg-blue-600":"bg-gray-300") + " relative w-12 h-6 rounded-full transition-colors cursor-pointer"}>
-            <span className={(remember?"translate-x-6":"translate-x-0") + " absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"}></span>
+          }} className={(remember?"bg-blue-600":"bg-gray-300 dark:bg-gray-700") + " relative w-12 h-6 rounded-full transition-colors cursor-pointer"}>
+            <span className={(remember?"translate-x-6":"translate-x-0") + " absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-100 rounded-full shadow transition-transform"}></span>
           </button>
         </div>
-        {!!sent && <div className="text-emerald-700">{sent}</div>}
+        {!!sent && <div className="text-emerald-700 dark:text-emerald-400">{sent}</div>}
         <button className="px-4 py-3 bg-gray-200 rounded-lg dark:bg-gray-800 dark:text-gray-100" onClick={()=>{ setRefresh(r=>r+1); setSent(''); }}>Generate New Code</button>
       </div>
     </div>

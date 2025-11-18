@@ -52,8 +52,8 @@ export default function RegisterChild() {
       <div className="mt-2 h-1 bg-blue-600 w-24 rounded"></div>
       <div className="mt-4 text-lg font-semibold">Child's Information</div>
       <div className="mt-2 grid grid-cols-2 gap-3">
-        <input className="px-3 py-2 border rounded" placeholder="Enter first name" value={first} onChange={e=>setFirst(e.target.value)} />
-        <input className="px-3 py-2 border rounded" placeholder="Enter last name" value={last} onChange={e=>setLast(e.target.value)} />
+        <input className="px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="Enter first name" value={first} onChange={e=>setFirst(e.target.value)} />
+        <input className="px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="Enter last name" value={last} onChange={e=>setLast(e.target.value)} />
       </div>
       <div className="mt-3 flex items-center gap-2 px-3 py-2 border rounded bg-white dark:bg-gray-800 dark:border-gray-700">
         <input className="flex-1 outline-none bg-transparent dark:text-gray-100" placeholder="mm/dd/yyyy" value={dob} onChange={e=>setDob(e.target.value)} />

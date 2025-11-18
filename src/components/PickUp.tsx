@@ -69,7 +69,7 @@ export default function PickUp() {
         </div>
       </div>
 
-      {error && <div className="mt-3 text-red-600">{error}</div>}
+      {error && <div className="mt-3 text-red-600 dark:text-red-400">{error}</div>}
 
       {result && (
         <div className="mt-6 bg-white rounded-xl border p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
