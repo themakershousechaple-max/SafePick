@@ -1,0 +1,20 @@
+{
+  "name": "SafePick",
+  "short_name": "SafePick",
+  "description": "Safe and secure child pickup management",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/safepick-icon.svg",
+      "sizes": "32x32 48x48 72x72 96x96 128x128 256x256 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "en"
+}

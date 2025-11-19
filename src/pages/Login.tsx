@@ -30,14 +30,14 @@ export default function Login() {
             <label className="text-sm">Email Address</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"><IconMail /></span>
-              <input className="w-full px-10 py-2 border rounded-lg outline-none bg-white dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="Enter email" value={email} onChange={e=>setEmail(e.target.value)} />
+              <input className="w-full px-10 py-2 border rounded-lg outline-none bg-white dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 text-base" placeholder="Enter email" value={email} onChange={e=>setEmail(e.target.value)} />
             </div>
           </div>
           <div className="grid gap-2">
             <label className="text-sm">Password</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"><IconLock /></span>
-              <input type={show? 'text' : 'password'} className="w-full px-10 py-2 border rounded-lg outline-none bg-white dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="Enter password" value={password} onChange={e=>setPassword(e.target.value)} />
+              <input type={show? 'text' : 'password'} className="w-full px-10 py-2 border rounded-lg outline-none bg-white dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 text-base" placeholder="Enter password" value={password} onChange={e=>setPassword(e.target.value)} />
               <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" onClick={()=>setShow(s=>!s)}><IconEye /></button>
             </div>
           </div>

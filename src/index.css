@@ -3,6 +3,44 @@
 @tailwind utilities;
 
 html, body, #root { height: 100%; }
+
+/* Prevent iOS zoom on input focus */
+input, textarea, select {
+  font-size: 16px !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Improve touch targets for mobile */
+@media (max-width: 768px) {
+  button, a, input, select, textarea {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+}
+
+/* Smooth scrolling and performance */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  touch-action: manipulation;
+}
+
+/* PWA improvements */
+body {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection in specific areas */
+input, textarea, .selectable {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 .dark input, .dark textarea, .dark select { background-color: #111827; color: #e5e7eb; }
 .dark input::placeholder, .dark textarea::placeholder { color: #9ca3af; }
 .dark input:focus, .dark textarea:focus, .dark select:focus { background-color: #111827; }
