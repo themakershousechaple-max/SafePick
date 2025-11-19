@@ -4,7 +4,7 @@ import { exportCsv as exportLocalCsv } from '../lib/storage'
 import { capacity, volunteerCount } from '../lib/config'
 import { generateQRCode, generateChildQRCode } from '../lib/qr'
 import { sendWhatsAppMessage } from '../lib/whatsapp'
-import { sendSMSMessage } from '../lib/sms'
+import { sendSMSMessage, sendSMSWithQRCode } from '../lib/sms'
 import { getRecentlyReleased, ReleasedChild } from '../lib/released'
 import WhatsAppMessenger from '../components/WhatsAppMessenger'
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog'
@@ -78,11 +78,19 @@ export default function Admin() {
   }
 
   // Send QR code via SMS
-  const sendQRSMS = (record: any) => {
+  const sendQRSMS = async (record: any) => {
     try {
-      const message = `🙏 ${record.childName} Pickup Details:\n\n📋 Pickup Code: ${record.code}${record.classroom ? `\n🏫 Classroom: ${record.classroom}` : ''}\n📱 QR Code contains: Child name, pickup code${record.classroom ? ', classroom' : ''}\n\nScan the QR code for complete pickup information.\n\nPlease keep this code secure.\n\n- TMHT Children's Ministry`
-      sendSMSMessage(record.phone, message)
-      setSent(`SMS opened for ${record.parentName}`)
+      // Check if we have a QR code for this record
+      if (qrCodes[record.id]) {
+        // Send SMS with QR code image
+        await sendSMSWithQRCode(record.phone, record.childName, record.code, qrCodes[record.id])
+        setSent(`QR code SMS opened for ${record.parentName}`)
+      } else {
+        // Fallback to regular SMS without QR code
+        const message = `🙏 ${record.childName} Pickup Details:\n\n📋 Pickup Code: ${record.code}${record.classroom ? `\n🏫 Classroom: ${record.classroom}` : ''}\n\nPlease keep this code secure.\n\n- TMHT Children's Ministry`
+        sendSMSMessage(record.phone, message)
+        setSent(`SMS opened for ${record.parentName}`)
+      }
     } catch (error) {
       setSent(`Could not open SMS. Please check phone permissions.`)
     }
