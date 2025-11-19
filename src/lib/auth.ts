@@ -1,11 +1,11 @@
 const KEY = 'auth_token'
 
 function expectedEmail() {
-  return (import.meta.env.VITE_LOGIN_EMAIL as string) || 'admin@tmhchurch.local'
+  return (import.meta.env.VITE_LOGIN_EMAIL as string) || 'at'
 }
 
 function expectedPassword() {
-  return (import.meta.env.VITE_LOGIN_PASSWORD as string) || 'Admin123!'
+  return (import.meta.env.VITE_LOGIN_PASSWORD as string) || 'at'
 }
 
 export function isAuthed() {
