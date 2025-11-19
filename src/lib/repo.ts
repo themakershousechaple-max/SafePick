@@ -51,7 +51,9 @@ export async function findByCode(code: string): Promise<RecordItem | undefined> 
   if (!hasSupabase() || !supabase) return lsFindByCode(code)
   const { data, error } = await supabase.from('check_ins').select('*').eq('pickup_code', Number(code)).maybeSingle()
   if (error) throw error
-  if (!data) return undefined
+  if (!data) {
+    return lsFindByCode(code)
+  }
   return {
     id: data.id,
     childName: data.child_name,
@@ -70,8 +72,11 @@ export async function releaseById(id: string): Promise<RecordItem | undefined> {
   if (!hasSupabase() || !supabase) {
     return updateById(id, { pickUpAt: new Date().toISOString() })
   }
-  const { data, error } = await supabase.from('check_ins').update({ pick_up_time: new Date().toISOString() }).eq('id', id).select('*').single()
+  const { data, error } = await supabase.from('check_ins').update({ pick_up_time: new Date().toISOString() }).eq('id', id).select('*').maybeSingle()
   if (error) throw error
+  if (!data) {
+    return updateById(id, { pickUpAt: new Date().toISOString() })
+  }
   return {
     id: data.id,
     childName: data.child_name,
@@ -87,10 +92,11 @@ export async function releaseById(id: string): Promise<RecordItem | undefined> {
 }
 
 export async function listAll(): Promise<RecordItem[]> {
-  if (!hasSupabase() || !supabase) return getRecords()
+  const local = getRecords()
+  if (!hasSupabase() || !supabase) return local
   const { data, error } = await supabase.from('check_ins').select('*').order('check_in_time', { ascending: false })
   if (error) throw error
-  return data.map((d: any) => ({
+  const remote: RecordItem[] = data.map((d: any) => ({
     id: d.id,
     childName: d.child_name,
     parentName: d.parent_name,
@@ -102,6 +108,10 @@ export async function listAll(): Promise<RecordItem[]> {
     checkInAt: d.check_in_time,
     pickUpAt: d.pick_up_time || undefined,
   }))
+  const byCode = new Map(remote.map(r => [r.code, true]))
+  const merged = remote.concat(local.filter(l => !byCode.get(l.code)))
+  merged.sort((a, b) => new Date(b.checkInAt).getTime() - new Date(a.checkInAt).getTime())
+  return merged
 }
 
 export function subscribeToCheckIns(onChange: (payload: any) => void) {
