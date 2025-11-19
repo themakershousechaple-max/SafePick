@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { listAll, deleteRecord } from '../lib/repo'
+import { listAll, deleteRecord, updateRecord } from '../lib/repo'
 import { exportCsv as exportLocalCsv } from '../lib/storage'
 import { capacity, volunteerCount } from '../lib/config'
 import { generateQRCode } from '../lib/qr'
 import { sendWhatsAppMessage } from '../lib/whatsapp'
+import { sendSMSMessage } from '../lib/sms'
 import WhatsAppMessenger from '../components/WhatsAppMessenger'
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog'
 import { IconSearch, IconDownload, IconMessageCircle, IconClose } from '../components/icons'
@@ -16,6 +17,9 @@ export default function Admin() {
   const [selectedRecord, setSelectedRecord] = useState<any>(null)
   const [deleteDialog, setDeleteDialog] = useState<{isOpen: boolean, record: any | null}>({ isOpen: false, record: null })
   const [isDeleting, setIsDeleting] = useState(false)
+  const [classroomOptions, setClassroomOptions] = useState(["Nursery", "Toddlers", "K-2nd Grade", "3rd-5th Grade", "Youth", "Special Needs"])
+  const [showClassroomManager, setShowClassroomManager] = useState(false)
+  const [newClassroom, setNewClassroom] = useState('')
   
   useEffect(() => { listAll().then(setRows).catch(()=>{}) }, [])
 
@@ -54,6 +58,13 @@ export default function Admin() {
     link.click()
   }
 
+  // Send QR code via SMS
+  const sendQRSMS = (record: any) => {
+    const message = `🙏 ${record.childName} Pickup Details:\n\n📋 Pickup Code: ${record.code}\n📱 Show this QR code at pickup: ${record.qrUrl}\n\nPlease keep this code secure.\n\n- TMHT Children's Ministry`
+    sendSMSMessage(record.phone, message)
+    setSent(`SMS sent to ${record.parentName}`)
+  }
+
   // Send QR code via WhatsApp
   const sendQRWhatsApp = (record: any) => {
     const message = `🙏 ${record.childName} Pickup Details:\n\n📋 Pickup Code: ${record.code}\n📱 Show this QR code at pickup: ${record.qrUrl}\n\nPlease keep this code secure.\n\n- TMHT Children's Ministry`
@@ -65,7 +76,36 @@ export default function Admin() {
     })
   }
 
-  // Delete record functions
+  // Classroom management functions
+  const addClassroom = () => {
+    if (!newClassroom.trim()) return
+    if (classroomOptions.includes(newClassroom.trim())) {
+      setSent('Classroom already exists')
+      return
+    }
+    setClassroomOptions(prev => [...prev, newClassroom.trim()])
+    setNewClassroom('')
+    setSent('Classroom added successfully')
+  }
+
+  const removeClassroom = (classroom: string) => {
+    setClassroomOptions(prev => prev.filter(c => c !== classroom))
+    setSent('Classroom removed successfully')
+  }
+  const handleClassroomChange = async (recordId: string, newClassroom: string) => {
+    try {
+      const success = await updateRecord(recordId, { serviceTime: newClassroom })
+      if (success) {
+        setRows(prev => prev.map(r => r.id === recordId ? { ...r, serviceTime: newClassroom } : r))
+        setSent(`Classroom updated successfully`)
+      } else {
+        setSent('Failed to update classroom')
+      }
+    } catch (error) {
+      console.error('Failed to update classroom:', error)
+      setSent('Failed to update classroom')
+    }
+  }
   const handleDeleteClick = (record: any) => {
     setDeleteDialog({ isOpen: true, record })
   }
@@ -133,7 +173,7 @@ export default function Admin() {
         }
       `}</style>
       <div className="text-lg font-semibold">Admin</div>
-      <div className="mt-3 grid grid-cols-2 gap-2">
+      <div className="mt-3 grid grid-cols-3 gap-2">
         <div className="p-2.5 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
           <div className="text-xs text-gray-600 dark:text-gray-300">Checked-In</div>
           <div className="text-xl font-bold">{checkedIn.length} / {capacity()}</div>
@@ -142,8 +182,6 @@ export default function Admin() {
           <div className="text-xs text-gray-600 dark:text-gray-300">Checked-Out</div>
           <div className="text-xl font-bold">{checkedOut.length}</div>
         </div>
-      </div>
-      <div className="mt-2">
         <div className="p-2.5 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
           <div className="text-xs text-gray-600 dark:text-gray-300">Total Records</div>
           <div className="text-xl font-bold">{rows.length}</div>
@@ -155,23 +193,72 @@ export default function Admin() {
         {!!sent && <div className="text-xs text-emerald-700 dark:text-emerald-400">{sent}</div>}
       </div>
 
-      {/* QR Codes Section */}
+      {/* Search Section */}
       <div className="mt-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold">Pickup Codes & QR Codes</h2>
-          <div className="relative">
+        <div className="flex justify-center mb-4">
+          <div className="relative w-full max-w-md">
             <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
               placeholder="Search by name, phone, or code..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 pr-3 py-1.5 border rounded-md bg-white dark:bg-gray-800 dark:border-gray-700 text-sm"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 text-sm"
             />
           </div>
         </div>
 
-        <div className="grid gap-3 max-h-80 overflow-y-auto hide-scrollbar">
+        {/* Connected Classroom Management Box */}
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">Classroom Management</h2>
+            <button 
+              onClick={() => setShowClassroomManager(!showClassroomManager)}
+              className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+            >
+              {showClassroomManager ? 'Hide' : 'Manage'}
+            </button>
+          </div>
+          
+          {showClassroomManager && (
+            <div className="mt-4 pt-4 border-t dark:border-gray-600">
+              <div className="mb-4">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Add new classroom..."
+                    value={newClassroom}
+                    onChange={(e) => setNewClassroom(e.target.value)}
+                    className="flex-1 px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 text-sm"
+                    onKeyPress={(e) => e.key === 'Enter' && addClassroom()}
+                  />
+                  <button 
+                    onClick={addClassroom}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                {classroomOptions.map((classroom) => (
+                  <div key={classroom} className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded-lg border dark:border-gray-600">
+                    <span className="text-sm font-medium">{classroom}</span>
+                    <button 
+                      onClick={() => removeClassroom(classroom)}
+                      className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="grid gap-3 overflow-y-auto hide-scrollbar" style={{ minHeight: 'calc(100vh - 400px)' }}>
           {filteredRecords.map((record) => (
             <div key={record.id} className="p-3 bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700">
               <div className="flex items-center justify-between mb-3">
@@ -183,6 +270,11 @@ export default function Admin() {
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     Code: <span className="font-mono font-bold text-blue-600 dark:text-blue-400">{record.code}</span>
                   </p>
+                  {record.serviceTime && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Classroom: <span className="font-medium">{record.serviceTime}</span>
+                    </p>
+                  )}
                 </div>
                 <div className="text-right space-y-2">
                   <div className={`px-2 py-1 rounded text-xs font-medium ${
@@ -197,7 +289,8 @@ export default function Admin() {
                     className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-1"
                     title="Delete this record"
                   >
-                    <IconClose size={14} />
+                    <IconClose size={14} className="hidden sm:inline" />
+                    <span className="sm:hidden">Delete</span>
                     <span className="hidden sm:inline">Delete</span>
                   </button>
                 </div>
@@ -213,7 +306,7 @@ export default function Admin() {
                       className="w-24 h-24 border rounded-lg"
                     />
                     <div className="flex-1 space-y-2">
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
                         <button
                           onClick={() => downloadQRCode(record)}
                           className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
@@ -227,6 +320,13 @@ export default function Admin() {
                         >
                           <IconMessageCircle size={16} />
                           Send via WhatsApp
+                        </button>
+                        <button
+                          onClick={() => sendQRSMS(record)}
+                          className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                        >
+                          <IconMessageCircle size={16} />
+                          Send via SMS
                         </button>
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">

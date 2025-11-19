@@ -123,6 +123,42 @@ export function subscribeToCheckIns(onChange: (payload: any) => void) {
   return { unsubscribe: () => { supabase!.removeChannel(channel) } }
 }
 
+export async function updateRecord(id: string, updates: Partial<RecordInput>): Promise<boolean> {
+  if (!hasSupabase() || !supabase) {
+    // Update in local storage
+    const records = getRecords()
+    const index = records.findIndex(r => r.id === id)
+    if (index === -1) return false
+    
+    records[index] = { ...records[index], ...updates }
+    setRecords(records)
+    return true
+  }
+  
+  try {
+    const { error } = await supabase.from('check_ins').update({
+      ...(updates.serviceTime && { service_time: updates.serviceTime }),
+      ...(updates.notes && { notes: updates.notes }),
+      // Add other fields as needed
+    }).eq('id', id)
+    
+    if (error) throw error
+    
+    // Also update local storage
+    const records = getRecords()
+    const index = records.findIndex(r => r.id === id)
+    if (index !== -1) {
+      records[index] = { ...records[index], ...updates }
+      setRecords(records)
+    }
+    
+    return true
+  } catch (error) {
+    console.error('Failed to update record:', error)
+    return false
+  }
+}
+
 export async function deleteRecord(id: string): Promise<boolean> {
   if (!hasSupabase() || !supabase) {
     deleteLocalRecord(id)

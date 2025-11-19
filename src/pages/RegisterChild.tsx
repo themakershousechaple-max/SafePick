@@ -18,15 +18,15 @@ export default function RegisterChild() {
   const [visitor, setVisitor] = useState(false)
   const [guardian, setGuardian] = useState('')
   const [phone, setPhone] = useState('')
-  const [email, setEmail] = useState('')
+  // Email field removed - phone only
   const [allergies, setAllergies] = useState('')
   const [notes, setNotes] = useState('')
   const [sent, setSent] = useState('')
-  const [guardians, setGuardians] = useState<{ name: string, phone: string, email: string }[]>([])
+  const [guardians, setGuardians] = useState<{ name: string, phone: string }[]>([])
   const [showGuardian, setShowGuardian] = useState(false)
   const [gName, setGName] = useState('')
   const [gPhone, setGPhone] = useState('')
-  const [gEmail, setGEmail] = useState('')
+  // Guardian email field removed
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [view, setView] = useState<'days'|'monthYear'>('days')
   const now = new Date()
@@ -43,7 +43,7 @@ export default function RegisterChild() {
 
   const totalSteps = 3
   const step1Done = !!first && !!last
-  const step2Done = !!guardian && !!phone && !!email
+  const step2Done = !!guardian && !!phone && phone.replace(/\D/g, '').length === 10
   const step3Done = !!allergies || !!notes
   const completedSteps = (step1Done?1:0) + (step2Done?1:0) + (step3Done?1:0)
   let currentStep = 1
@@ -102,12 +102,11 @@ export default function RegisterChild() {
   }
 
   function addGuardian() {
-    if (!gName || !gPhone || !gEmail) return
-    const next = guardians.concat({ name: gName, phone: gPhone, email: gEmail })
+    if (!gName || !gPhone || gPhone.replace(/\D/g, '').length !== 10) return
+    const next = guardians.concat({ name: gName, phone: gPhone })
     setGuardians(next)
     setGName('')
     setGPhone('')
-    setGEmail('')
     setShowGuardian(false)
   }
 
@@ -148,11 +147,19 @@ export default function RegisterChild() {
       </div>
       <div className="mt-5 text-lg font-semibold">Parent/Guardian Information</div>
       <div className="mt-2 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4 shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           <input className="px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="Enter full name" value={guardian} onChange={e=>setGuardian(e.target.value)} />
-          <input className="px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="(555) 123-4567" value={phone} onChange={e=>setPhone(e.target.value)} />
+          <input 
+            className="px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" 
+            placeholder="(555) 123-4567" 
+            value={phone} 
+            onChange={e=>setPhone(e.target.value)}
+            maxLength={14}
+          />
+          {phone && phone.replace(/\D/g, '').length !== 10 && (
+            <div className="text-xs text-red-600 dark:text-red-400">Phone number must be 10 digits</div>
+          )}
         </div>
-        <input className="mt-3 px-3 py-2 border rounded-xl w-full dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="example@email.com" value={email} onChange={e=>setEmail(e.target.value)} />
         <button className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-xl border border-blue-600 hover:bg-blue-700 active:bg-white active:text-blue-600 w-full transition-colors" onClick={()=>setShowGuardian(true)}>+ Add Another Guardian</button>
         {!!guardians.length && (
           <div className="mt-3">
@@ -160,7 +167,7 @@ export default function RegisterChild() {
               <div key={i} className="flex items-center justify-between px-3 py-2 border rounded mb-2 dark:border-gray-700">
                 <div className="text-sm">
                   <div className="font-medium">{g.name}</div>
-                  <div className="text-gray-600 dark:text-gray-300">{g.phone} • {g.email}</div>
+                  <div className="text-gray-600 dark:text-gray-300">{g.phone}</div>
                 </div>
                 <button className="text-red-600 text-sm" onClick={()=>setGuardians(guardians.filter((_,idx)=>idx!==i))}>Remove</button>
               </div>
@@ -247,8 +254,16 @@ export default function RegisterChild() {
             <div className="text-lg font-semibold">Add Guardian</div>
             <div className="mt-3 grid gap-3">
               <input className="px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="Full name" value={gName} onChange={e=>setGName(e.target.value)} />
-              <input className="px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="Phone number" value={gPhone} onChange={e=>setGPhone(e.target.value)} />
-              <input className="px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" placeholder="Email address" value={gEmail} onChange={e=>setGEmail(e.target.value)} />
+              <input 
+                className="px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" 
+                placeholder="Phone number" 
+                value={gPhone} 
+                onChange={e=>setGPhone(e.target.value)}
+                maxLength={14}
+              />
+              {gPhone && gPhone.replace(/\D/g, '').length !== 10 && (
+                <div className="text-xs text-red-600 dark:text-red-400">Phone number must be 10 digits</div>
+              )}
             </div>
             <div className="mt-4 flex gap-2">
               <button className="flex-1 px-4 py-2 border rounded dark:border-gray-700" onClick={()=>setShowGuardian(false)}>Cancel</button>
