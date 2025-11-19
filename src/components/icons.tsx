@@ -20,10 +20,9 @@ export function IconDownload(props: React.SVGProps<SVGSVGElement>) { return (<sv
 export function LogoMark(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 48 48" width="1em" height="1em" {...props}>
-      <rect x="4" y="4" width="40" height="40" rx="12" stroke="currentColor" strokeWidth="2" fill="none" />
-      <path d="M24 12l4 3v4l5 2v12H15V21l5-2v-4l4-3z" stroke="currentColor" strokeWidth="2" fill="none" />
-      <circle cx="24" cy="28" r="3" stroke="currentColor" strokeWidth="2" fill="none" />
-      <path d="M18 33c2-2 4-3 6-3s4 1 6 3" stroke="currentColor" strokeWidth="2" fill="none" />
+      <rect x="4" y="4" width="40" height="40" rx="12" fill="currentColor" fillOpacity="0.1" stroke="currentColor" strokeWidth="2" />
+      <path d="M24 8L34 14V26C34 30 30 34 24 34C18 34 14 30 14 26V14L24 8Z" stroke="currentColor" strokeWidth="2" fill="none" />
+      <path d="M20 24L22 26L28 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }

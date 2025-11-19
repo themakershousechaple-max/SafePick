@@ -30,7 +30,7 @@ export default function Header() {
           <Link to="/dashboard" className="inline-flex items-center justify-center shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-xl bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors">
             <LogoMark className="w-5 h-5 md:w-6 md:h-6" />
           </Link>
-          <div className="hidden md:block text-base md:text-lg font-semibold">Church Kids Check-In</div>
+          <div className="hidden md:block text-base md:text-lg font-semibold">SafePick</div>
         </div>
         <div className="flex justify-center gap-2">
           <Link to="/dashboard" className={"px-3 py-1.5 rounded-md border " + (loc.pathname === '/dashboard' ? 'bg-blue-600 text-white border-transparent' : 'bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100 dark:border-gray-700')}>Dashboard</Link>
