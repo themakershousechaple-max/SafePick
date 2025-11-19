@@ -38,6 +38,7 @@ export default function Admin() {
 
   const checkedIn = useMemo(() => rows.filter(r => !r.pickUpAt), [rows])
   const checkedOut = useMemo(() => rows.filter(r => !!r.pickUpAt), [rows])
+  const [showCheckInOut, setShowCheckInOut] = useState(false)
 
   // Filter records based on search term
   const filteredRecords = useMemo(() => {
@@ -218,6 +219,86 @@ export default function Admin() {
           <div className="text-xl font-bold">{rows.length}</div>
         </div>
       </div>
+
+      {/* Check-In/Check-Out Tracking Section */}
+      <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-base font-semibold text-blue-800 dark:text-blue-200">
+            Check-In/Out Status
+          </h3>
+          <button 
+            onClick={() => setShowCheckInOut(!showCheckInOut)}
+            className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+          >
+            {showCheckInOut ? 'Hide' : 'Show'}
+          </button>
+        </div>
+        
+        {showCheckInOut && (
+          <div className="space-y-4">
+            {/* Currently Checked-In */}
+            <div>
+              <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">
+                Currently Checked-In ({checkedIn.length})
+              </h4>
+              {checkedIn.length > 0 ? (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {checkedIn.map((record) => (
+                    <div key={record.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                      <div>
+                        <div className="font-medium text-gray-800 dark:text-gray-100">{record.childName}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">{record.parentName}</div>
+                        <div className="text-xs font-mono text-blue-600 dark:text-blue-400">Code: {record.code}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {new Date(record.checkInAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+                        </div>
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full ml-auto mt-1"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                  No children currently checked in
+                </div>
+              )}
+            </div>
+
+            {/* Recently Checked-Out */}
+            <div>
+              <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">
+                Recently Checked-Out ({checkedOut.length})
+              </h4>
+              {checkedOut.length > 0 ? (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {checkedOut.slice(0, 10).map((record) => (
+                    <div key={record.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                      <div>
+                        <div className="font-medium text-gray-800 dark:text-gray-100">{record.childName}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">{record.parentName}</div>
+                        <div className="text-xs font-mono text-blue-600 dark:text-blue-400">Code: {record.code}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Out: {record.pickUpAt ? new Date(record.pickUpAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'N/A'}
+                        </div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full ml-auto mt-1"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                  No recent check-outs
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="mt-3 grid gap-3">
         <button className="px-4 py-2.5 bg-blue-600 text-white rounded-lg border border-blue-600 hover:bg-blue-700 active:bg-white active:text-blue-600 transition-colors text-sm font-medium" onClick={exportCsv}>Export CSV</button>
         <button className="px-4 py-2.5 bg-gray-200 rounded-lg border hover:bg-gray-300 active:bg-white transition-colors dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 text-sm font-medium" onClick={copySummary}>Copy Summary</button>
