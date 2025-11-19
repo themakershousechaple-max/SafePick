@@ -25,20 +25,20 @@ export default function Header() {
   const checkedInCount = rows.filter(r => !r.pickUpAt).length
   return (
     <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur border-b dark:border-gray-800 sticky top-0 z-40 shadow-sm">
-      <div className="px-4 py-2 grid grid-cols-3 items-center">
+      <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Link to="/dashboard" className="inline-flex items-center justify-center shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-xl bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors">
-            <LogoMark className="w-5 h-5 md:w-6 md:h-6" />
+          <Link to="/dashboard" className="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors">
+            <LogoMark className="w-5 h-5" />
           </Link>
-          <div className="hidden md:block text-base md:text-lg font-semibold">SafePick</div>
+          <div className="hidden md:block text-base font-semibold">SafePick</div>
         </div>
-        <div className="flex justify-center gap-2">
-          <Link to="/dashboard" className={"px-3 py-1.5 rounded-md border " + (loc.pathname === '/dashboard' ? 'bg-blue-600 text-white border-transparent' : 'bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100 dark:border-gray-700')}>Dashboard</Link>
-          <Link to="/admin" className={"px-3 py-1.5 rounded-md border " + (loc.pathname === '/admin' ? 'bg-blue-600 text-white border-transparent' : 'bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100 dark:border-gray-700')}>Admin</Link>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Link to="/dashboard" className={"px-2 sm:px-3 py-1.5 text-sm rounded-md border " + (loc.pathname === '/dashboard' ? 'bg-blue-600 text-white border-transparent' : 'bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100 dark:border-gray-700')}>Dashboard</Link>
+          <Link to="/admin" className={"px-2 sm:px-3 py-1.5 text-sm rounded-md border " + (loc.pathname === '/admin' ? 'bg-blue-600 text-white border-transparent' : 'bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100 dark:border-gray-700')}>Admin</Link>
         </div>
-        <div className="flex justify-end">
-          <button aria-label="Menu" className="p-2 rounded-md bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 flex items-center gap-2" onClick={openMenu}>
-            <IconMenu />
+        <div className="flex items-center">
+          <button aria-label="Menu" className="p-2 rounded-md bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 flex items-center gap-1" onClick={openMenu}>
+            <IconMenu className="w-4 h-4" />
             <span className="hidden sm:inline text-sm font-medium">Menu</span>
           </button>
         </div>

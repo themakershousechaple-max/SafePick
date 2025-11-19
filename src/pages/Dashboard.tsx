@@ -17,8 +17,8 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 mx-auto max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl">
-      <div className="flex items-center justify-center">
-        <div className="text-lg font-semibold">Sunday Service Check-In</div>
+      <div className="flex items-center justify-center mt-2 mb-4">
+        <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Sunday Service Check-In</div>
       </div>
       <div className="mt-4 grid gap-3">
         <Link to="/register" className="px-4 py-3 bg-blue-600 text-white rounded-xl border border-blue-600 hover:bg-blue-700 active:bg-white active:text-blue-600 transition-colors text-center">Check-In Child</Link>
