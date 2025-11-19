@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { generateCode } from '../lib/code'
 import { createRecord } from '../lib/repo'
-import { generateQRCode } from '../lib/qr'
+import { generateQRCode, generateChildQRCode } from '../lib/qr'
 import { sendWhatsAppMessage, formatPhoneNumber } from '../lib/whatsapp'
 import { sendSMSMessage, generateSMSMessage } from '../lib/sms'
 import { generatePickupMessage } from '../lib/qr'
@@ -54,10 +54,18 @@ export default function RegisterChild() {
     try {
       const childName = [first, last].filter(Boolean).join(' ')
       const code = generateCode(classroom || undefined)
-      const pickupUrl = window.location.origin + '/pickup?code=' + code
       
-      // Generate QR code
-      const qrCodeDataUrl = await generateQRCode(pickupUrl)
+      // Generate QR code with child details
+      const qrCodeDataUrl = await generateChildQRCode({
+        childName,
+        code,
+        classroom: classroom || undefined,
+        parentName: guardian || undefined,
+        timestamp: new Date().toLocaleString()
+      })
+      
+      // Generate pickup URL for the success page (not for QR code)
+      const pickupUrl = window.location.origin + '/pickup?code=' + code
       
       // Create record with QR code
       await createRecord({ 
@@ -71,8 +79,18 @@ export default function RegisterChild() {
       })
       
       // Generate and send messages
-      const whatsappMessage = generatePickupMessage(childName, code, pickupUrl)
-      const smsMessage = generateSMSMessage(childName, code)
+      const whatsappMessage = `🙏 ${childName} Pickup Details:
+
+📋 Pickup Code: ${code}${classroom ? `\n🏫 Classroom: ${classroom}` : ''}
+📱 QR Code contains: Child name, pickup code${classroom ? ', classroom' : ''}
+
+Scan the QR code for complete pickup information.
+
+Please keep this code secure.
+
+- TMHT Children's Ministry`
+      
+      const smsMessage = `TMHT Childrens Ministry: ${childName} checked in successfully! Pickup Code: ${code}${classroom ? `, Classroom: ${classroom}` : ''}. QR code contains all pickup details. Questions? Contact the ministry team.`
       
       // Send both WhatsApp and SMS messages
       sendWhatsAppMessage({

@@ -17,6 +17,27 @@ export async function generateQRCode(text: string): Promise<string> {
   }
 }
 
+export async function generateChildQRCode(childData: {
+  childName: string
+  code: string
+  classroom?: string
+  parentName?: string
+  timestamp?: string
+}): Promise<string> {
+  const qrData = `🙏 TMHT CHILDREN'S MINISTRY
+
+👶 CHILD: ${childData.childName}
+📋 PICKUP CODE: ${childData.code}
+${childData.classroom ? `🏫 CLASSROOM: ${childData.classroom}` : ''}
+${childData.parentName ? `👨‍👩‍👧‍👦 PARENT: ${childData.parentName}` : ''}
+${childData.timestamp ? `⏰ CHECKED IN: ${childData.timestamp}` : ''}
+
+✅ PRESENT THIS CODE FOR PICKUP
+❗ KEEP THIS CODE SECURE`
+
+  return await generateQRCode(qrData)
+}
+
 export function generatePickupMessage(childName: string, code: string, qrCodeUrl: string): string {
   return `🙏 ${childName} has been checked in safely!
 

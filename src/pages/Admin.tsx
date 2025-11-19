@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { listAll, deleteRecord, updateRecord } from '../lib/repo'
 import { exportCsv as exportLocalCsv } from '../lib/storage'
 import { capacity, volunteerCount } from '../lib/config'
-import { generateQRCode } from '../lib/qr'
+import { generateQRCode, generateChildQRCode } from '../lib/qr'
 import { sendWhatsAppMessage } from '../lib/whatsapp'
 import { sendSMSMessage } from '../lib/sms'
 import WhatsAppMessenger from '../components/WhatsAppMessenger'
@@ -40,7 +40,13 @@ export default function Admin() {
   // Generate QR code for a specific record
   const generateQRForRecord = async (record: any) => {
     try {
-      const qrDataUrl = await generateQRCode(record.qrUrl)
+      const qrDataUrl = await generateChildQRCode({
+        childName: record.childName,
+        code: record.code,
+        classroom: record.classroom || undefined,
+        parentName: record.parentName || undefined,
+        timestamp: record.createdAt || new Date().toLocaleString()
+      })
       setQrCodes(prev => ({ ...prev, [record.id]: qrDataUrl }))
     } catch (error) {
       console.error('Failed to generate QR code:', error)
@@ -61,7 +67,7 @@ export default function Admin() {
   // Send QR code via SMS
   const sendQRSMS = (record: any) => {
     try {
-      const message = `🙏 ${record.childName} Pickup Details:\n\n📋 Pickup Code: ${record.code}\n📱 Show this QR code at pickup: ${record.qrUrl}\n\nPlease keep this code secure.\n\n- TMHT Children's Ministry`
+      const message = `🙏 ${record.childName} Pickup Details:\n\n📋 Pickup Code: ${record.code}${record.classroom ? `\n🏫 Classroom: ${record.classroom}` : ''}\n📱 QR Code contains: Child name, pickup code${record.classroom ? ', classroom' : ''}\n\nScan the QR code for complete pickup information.\n\nPlease keep this code secure.\n\n- TMHT Children's Ministry`
       sendSMSMessage(record.phone, message)
       setSent(`SMS opened for ${record.parentName}`)
     } catch (error) {
@@ -71,7 +77,7 @@ export default function Admin() {
 
   // Send QR code via WhatsApp
   const sendQRWhatsApp = (record: any) => {
-    const message = `🙏 ${record.childName} Pickup Details:\n\n📋 Pickup Code: ${record.code}\n📱 Show this QR code at pickup: ${record.qrUrl}\n\nPlease keep this code secure.\n\n- TMHT Children's Ministry`
+    const message = `🙏 ${record.childName} Pickup Details:\n\n📋 Pickup Code: ${record.code}${record.classroom ? `\n🏫 Classroom: ${record.classroom}` : ''}\n📱 QR Code contains: Child name, pickup code${record.classroom ? ', classroom' : ''}\n\nScan the QR code for complete pickup information.\n\nPlease keep this code secure.\n\n- TMHT Children's Ministry`
     sendWhatsAppMessage({
       phone: record.phone,
       message,
