@@ -187,11 +187,6 @@ export default function Admin() {
     setSent('Exported CSV. ' + summary)
   }
 
-  async function copySummary() {
-    const summary = 'Checked-In: ' + checkedIn.length + ' / ' + capacity() + ' • Checked-Out: ' + checkedOut.length + ' • Volunteers: ' + volunteerCount()
-    try { await navigator.clipboard.writeText(summary); setSent('Summary copied') } catch { setSent('Unable to copy summary') }
-  }
-
   return (
     <div className="p-4 mx-auto max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl">
       <style jsx>{`
@@ -221,77 +216,136 @@ export default function Admin() {
       </div>
 
       {/* Check-In/Check-Out Tracking Section */}
-      <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-semibold text-blue-800 dark:text-blue-200">
+      <div className="mt-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-2">
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-xs font-semibold text-blue-800 dark:text-blue-200">
             Check-In/Out Status
           </h3>
-          <button 
-            onClick={() => setShowCheckInOut(!showCheckInOut)}
-            className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-          >
-            {showCheckInOut ? 'Hide' : 'Show'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowCheckInOut(!showCheckInOut)}
+              className="sm:hidden px-2 py-0.5 rounded bg-blue-600 text-white text-xs font-medium"
+            >
+              {showCheckInOut ? 'Hide' : 'Show'}
+            </button>
+            <button 
+              onClick={() => setShowCheckInOut(!showCheckInOut)}
+              aria-pressed={showCheckInOut}
+              className={(showCheckInOut ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-300 dark:bg-gray-700') + ' relative w-12 h-5 rounded-full transition-colors cursor-pointer hidden sm:inline-flex'}
+            >
+              <span className={(showCheckInOut ? 'translate-x-7' : 'translate-x-0') + ' absolute top-0.5 left-0.5 w-4 h-4 bg-white dark:bg-gray-100 rounded-full shadow transition-transform'}></span>
+            </button>
+          </div>
         </div>
         
         {showCheckInOut && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Currently Checked-In */}
             <div>
-              <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">
-                Currently Checked-In ({checkedIn.length})
-              </h4>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                  Currently Checked-In ({checkedIn.length})
+                </h4>
+                <div className="flex items-center space-x-1">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Active</span>
+                </div>
+              </div>
               {checkedIn.length > 0 ? (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+                <div className="space-y-1 max-h-48 overflow-y-auto pr-2">
                   {checkedIn.map((record) => (
-                    <div key={record.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
-                      <div>
-                        <div className="font-medium text-gray-800 dark:text-gray-100">{record.childName}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{record.parentName}</div>
-                        <div className="text-xs font-mono text-blue-600 dark:text-blue-400">Code: {record.code}</div>
+                    <div key={record.id} className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-700/50 shadow-sm hover:shadow-md transition-all duration-200">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                        <div>
+                          <div className="font-semibold text-emerald-800 dark:text-emerald-100 text-sm">{record.childName}</div>
+                          <div className="text-xs text-emerald-600 dark:text-emerald-400">{record.parentName}</div>
+                          <div className="text-xs font-mono text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-800/30 px-2 py-1 rounded mt-1 inline-block">
+                            Code: {record.code}
+                          </div>
+                        </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
                           {new Date(record.checkInAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
                         </div>
-                        <div className="w-2 h-2 bg-emerald-400 rounded-full ml-auto mt-1"></div>
+                        <div className="text-xs text-emerald-500 dark:text-emerald-500 mt-1">
+                          {record.classroom && (
+                            <span className="bg-emerald-100 dark:bg-emerald-800/30 px-2 py-1 rounded-full text-xs">
+                              {record.classroom}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                  No children currently checked in
+                <div className="text-center py-4">
+                  <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <div className="w-4 h-4 text-emerald-400">👶</div>
+                  </div>
+                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                    No children currently checked in
+                  </div>
+                  <div className="text-xs text-emerald-500 dark:text-emerald-500 mt-1">
+                    Ready to welcome new arrivals!
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Recently Checked-Out */}
             <div>
-              <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">
-                Recently Checked-Out ({checkedOut.length})
-              </h4>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                  Recently Checked-Out ({checkedOut.length})
+                </h4>
+                <div className="flex items-center space-x-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                  <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Completed</span>
+                </div>
+              </div>
               {checkedOut.length > 0 ? (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+                <div className="space-y-1 max-h-48 overflow-y-auto pr-2">
                   {checkedOut.slice(0, 10).map((record) => (
-                    <div key={record.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
-                      <div>
-                        <div className="font-medium text-gray-800 dark:text-gray-100">{record.childName}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{record.parentName}</div>
-                        <div className="text-xs font-mono text-blue-600 dark:text-blue-400">Code: {record.code}</div>
+                    <div key={record.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                        <div>
+                          <div className="font-semibold text-gray-800 dark:text-gray-100 text-sm">{record.childName}</div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">{record.parentName}</div>
+                          <div className="text-xs font-mono text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800/30 px-2 py-1 rounded mt-1 inline-block">
+                            Code: {record.code}
+                          </div>
+                        </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">
                           Out: {record.pickUpAt ? new Date(record.pickUpAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'N/A'}
                         </div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full ml-auto mt-1"></div>
+                        <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                          {record.classroom && (
+                            <span className="bg-gray-100 dark:bg-gray-800/30 px-2 py-1 rounded-full text-xs">
+                              {record.classroom}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                  No recent check-outs
+                <div className="text-center py-4">
+                  <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <div className="w-4 h-4 text-gray-400">✅</div>
+                  </div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+                    No recent check-outs
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                    All children are currently checked in
+                  </div>
                 </div>
               )}
             </div>
@@ -301,7 +355,6 @@ export default function Admin() {
 
       <div className="mt-3 grid gap-3">
         <button className="px-4 py-2.5 bg-blue-600 text-white rounded-lg border border-blue-600 hover:bg-blue-700 active:bg-white active:text-blue-600 transition-colors text-sm font-medium" onClick={exportCsv}>Export CSV</button>
-        <button className="px-4 py-2.5 bg-gray-200 rounded-lg border hover:bg-gray-300 active:bg-white transition-colors dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 text-sm font-medium" onClick={copySummary}>Copy Summary</button>
         {!!sent && <div className="text-xs text-emerald-700 dark:text-emerald-400">{sent}</div>}
       </div>
 

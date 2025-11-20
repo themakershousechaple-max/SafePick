@@ -57,7 +57,14 @@ export async function sendSMSWithQRCode(phone: string, childName: string, code: 
   const cleanPhone = phone.replace(/\D/g, '')
   
   // Create a simple text message with the code and instructions
-  const message = `TMHT Childrens Ministry: ${childName} - Pickup Code: ${code}\n\nQR Code: ${qrCodeDataUrl}\n\nSave this code to pick up your child.`
+  const message = `🙏 TMHT Childrens Ministry
+
+👶 ${childName}
+🔢 Pickup Code: ${code}
+
+📱 QR Code: ${qrCodeDataUrl}
+
+📋 Save this code to pick up your child`
   
   // For better user experience, we'll also try to create a shareable link
   // that opens the QR code image in a browser
@@ -70,7 +77,14 @@ export async function sendSMSWithQRCode(phone: string, childName: string, code: 
     const blobUrl = URL.createObjectURL(blob)
     
     // Create a shorter message with the blob URL
-    shareableMessage = `TMHT Childrens Ministry: ${childName} - Pickup Code: ${code}\n\nView QR Code: ${blobUrl}\n\nSave this code to pick up your child.`
+    shareableMessage = `🙏 TMHT Childrens Ministry
+
+👶 ${childName}
+🔢 Pickup Code: ${code}
+
+📱 View QR Code: ${blobUrl}
+
+📋 Save this code to pick up your child`
     
     // Clean up the blob URL after a delay to prevent memory leaks
     setTimeout(() => URL.revokeObjectURL(blobUrl), 60000) // Revoke after 1 minute
@@ -112,5 +126,13 @@ export async function sendSMSWithQRCode(phone: string, childName: string, code: 
 }
 
 export function generateSMSMessage(childName: string, code: string): string {
-  return `TMHT Childrens Ministry: ${childName} checked in successfully! Pickup Code: ${code}. Save this code to pick up your child. Questions? Contact the ministry team.`
+  return `🙏 TMHT Childrens Ministry
+
+✅ ${childName} checked in successfully!
+
+🔢 Pickup Code: ${code}
+
+📋 Save this code to pick up your child
+
+❓ Questions? Contact the ministry team`
 }
